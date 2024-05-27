@@ -40,8 +40,8 @@ IMG_SIZE=150
 
 TEST_SIZE=0.15
 #assuming dataset folder is in the same folder as this file
-noFire_DIR= rf"{DIR}\datasets\noMask" 
-Fire_DIR= rf"{DIR}\datasets\Mask"
+noMask_DIR= rf"{DIR}\datasets\noMask" 
+Mask_DIR= rf"{DIR}\datasets\Mask"
 
 def assign_label(img, imgCls):
 	return imgCls
@@ -56,10 +56,10 @@ def make_train_data(imgCls, DIR):
         X.append(np.array(img))
         Z.append(str(label))
 
-make_train_data('Mask', Fire_DIR)
+make_train_data('Mask', Mask_DIR)
 print(len(X))
 
-make_train_data('noMask',noFire_DIR)
+make_train_data('noMask',noMask_DIR)
 print(len(X))
 
 lb=LabelBinarizer()
@@ -187,6 +187,23 @@ plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
 plt.savefig(rf"{TEST_SIZE}_Loss_and_Accuracy.png")
+plt.show()
+
+
+predictions = model.predict(x_test)
+
+threshold = 0.5  # Adjust as needed
+binary_predictions = (predictions > threshold).astype(int)
+
+# Plot the original images with the detected water bodies
+fig, axes = plt.subplots(nrows=1, ncols=len(x_test), figsize=(15, 5))
+for i, (image, prediction) in enumerate(zip(x_test, binary_predictions)):
+    axes[i].imshow(image)
+    # Overlay detected water bodies
+    water_mask = np.zeros_like(image)
+    water_mask[prediction == 1] = [0, 0, 255]  # Mark water bodies in blue
+    axes[i].imshow(water_mask, alpha=0.3)  # Overlay with transparency
+    axes[i].axis('off')
 plt.show()
 
 a=1

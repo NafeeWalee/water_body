@@ -7,14 +7,14 @@ DIR = rf"{os.path.dirname(__file__)}"
 
 noMask_Image= rf"{DIR}\datasets\noMask\water_body_3.jpg"
 
-resized_image = cv2.resize(noMask_Image, (150, 150), interpolation=cv2.INTER_AREA)
-normalized_image = resized_image / 255.0  # Normalize pixel values to range [0, 1]
-
 # Load the pre-trained model
 model = load_model('water_detection_model.h5')
 
 # Load the new image
-image = cv2.imread(normalized_image)
+read_image = cv2.imread(noMask_Image)
+
+resized_image = cv2.resize(read_image, (150, 150))
+image = resized_image / 255.0  # Normalize pixel values to range [0, 1]
 
 # Predict the mask using the model
 predicted_mask = model.predict(np.expand_dims(image, axis=0))[0]
